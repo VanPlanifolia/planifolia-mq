@@ -8,7 +8,9 @@ import java.lang.reflect.Method;
 /**
  * @author Van.Planifolia
  * @create 2025/4/14 11:56
- * @description 消费者执行代理类, 代理了消费者的消费动作, 统一入口
+ * @description <br>
+ * 这里我们则是抽象出来了一个代理类,该类职责为代理使用者创建的CustomerHandler中的所有方法,对外暴露了执行消费者方法的口子{@link #invoke(DelayMessage)}方便消息分发器进行统一处理<br>
+ * 1.目前该代理还是手动的,后续应该考虑自动进行扫码CustomerHandler进行代理操作
  */
 public class CustomerInvoke {
     /**
