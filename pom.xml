@@ -8,9 +8,9 @@
         <version>3.4.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>van.planifolia</groupId>
+    <groupId>van.planiflia</groupId>
     <artifactId>planifolia-mq</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.4</version>
     <name>planifolia-mq</name>
     <description>planifolia-mq</description>
     <url/>

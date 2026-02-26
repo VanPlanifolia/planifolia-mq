@@ -20,7 +20,7 @@ public class DelayTaskWrapper implements Delayed {
     /**
      * 消息分发器,要采用那种方式的消息分发机制
      */
-    private final DelayQueueDispatcher dispatcher;
+    private final DelayMessageDispatcher dispatcher;
     /**
      * 什么时候去执行
      */
@@ -33,7 +33,7 @@ public class DelayTaskWrapper implements Delayed {
      * @param timeUnit    入参时间格式
      * @param delayMillis 延迟时间
      */
-    public DelayTaskWrapper(DelayMessage message, DelayQueueDispatcher dispatcher, long delayMillis, TimeUnit timeUnit) {
+    public DelayTaskWrapper(DelayMessage message, DelayMessageDispatcher dispatcher, long delayMillis, TimeUnit timeUnit) {
         this.message = message;
         this.dispatcher = dispatcher;
         this.runAt = System.currentTimeMillis() + timeUnit.toMillis(delayMillis);
@@ -45,7 +45,7 @@ public class DelayTaskWrapper implements Delayed {
      * @param dispatcher  消息分发器
      * @param delayMillis 延迟时间
      */
-    public DelayTaskWrapper(DelayMessage message, DelayQueueDispatcher dispatcher, long delayMillis) {
+    public DelayTaskWrapper(DelayMessage message, DelayMessageDispatcher dispatcher, long delayMillis) {
         this.message = message;
         this.dispatcher = dispatcher;
         this.runAt = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(delayMillis);

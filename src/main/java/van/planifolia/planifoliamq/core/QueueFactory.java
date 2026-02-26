@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import van.planifolia.planifoliamq.exception.QueueIsExistsException;
 import van.planifolia.planifoliamq.model.DelayMessage;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.DelayQueue;
@@ -32,7 +31,7 @@ public class QueueFactory {
      *
      * @param name 队列名称
      */
-    public static void createQueue(String name) {
+    public  void createQueue(String name) {
         if (delayQueueMap.get(name) != null) {
             throw new QueueIsExistsException("创建的队列已存在！");
         }
@@ -45,7 +44,7 @@ public class QueueFactory {
      * @param name 队列名称
      * @return 查找到的队列信息
      */
-    public static DelayQueue<DelayTaskWrapper> getQueue(String name) {
+    public  DelayQueue<DelayTaskWrapper> getQueue(String name) {
         return delayQueueMap.computeIfAbsent(name, k -> new DelayQueue<>());
     }
 
@@ -57,7 +56,7 @@ public class QueueFactory {
      * @param dispatcher 消息分发器具
      * @param second     延迟时间
      */
-    public static void offer(String queueName, DelayMessage message, DelayQueueDispatcher dispatcher, Long second) {
+    public  void offer(String queueName, DelayMessage message, DelayMessageDispatcher dispatcher, Long second) {
         getQueue(queueName).offer(new DelayTaskWrapper(message, dispatcher, second));
     }
 
@@ -66,8 +65,9 @@ public class QueueFactory {
      *
      * @param queueName 被操作的队列名称
      */
-    public static Runnable createPollingTask(String queueName) {
+    public Runnable createPollingTask(String queueName) {
         return () -> {
+            log.info("队列:{},消息观察者创建成功",queueName);
             DelayQueue<DelayTaskWrapper> queue = getQueue(queueName);
             while (true) {
                 try {
