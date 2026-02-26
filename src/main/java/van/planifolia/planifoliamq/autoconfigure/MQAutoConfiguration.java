@@ -3,6 +3,8 @@ package van.planifolia.planifoliamq.autoconfigure;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import van.planifolia.planifoliamq.core.*;
 
 import java.util.List;
@@ -16,6 +18,21 @@ import java.util.List;
 public class MQAutoConfiguration {
 
     /**
+     * 异步线程池
+     * @return 线程池
+     */
+    @Bean
+    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);  // 设置核心线程数
+        executor.setMaxPoolSize(10);  // 设置最大线程数
+        executor.setQueueCapacity(25);  // 设置队列容量
+        executor.setThreadNamePrefix("QueueObserver-");
+        executor.initialize();
+        return executor;
+    }
+
+    /**
      * 消费者注册器,初始化该Bean并且将所有的消费者加入注册表
      *
      * @return 消费者注册器
@@ -27,6 +44,7 @@ public class MQAutoConfiguration {
         return customerRegister;
     }
 
+
     /**
      * 创建队列工厂
      *
@@ -34,10 +52,9 @@ public class MQAutoConfiguration {
      * @return 队列工厂,用于初始化bean以及创建每个队列的观察者
      */
     @Bean
-    public QueueFactory queueFactory(CustomerRegister customerRegister) {
-        QueueFactory queueFactory = new QueueFactory();
-        customerRegister.getAllQueueName().forEach(queueFactory::createPollingTask);
-        return queueFactory;
+    @DependsOn("customerRegister")
+    public QueueFactory queueFactory(CustomerRegister customerRegister,ThreadPoolTaskExecutor  threadPoolTaskExecutor) {
+        return new QueueFactory(customerRegister,threadPoolTaskExecutor);
     }
 
     /**

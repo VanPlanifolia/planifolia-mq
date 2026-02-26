@@ -25,7 +25,7 @@ public class DelayQueueTemplate {
     public DelayQueueTemplate(DelayMessageDispatcher dispatcher, QueueFactory queueFactory) {
         this.dispatcher = dispatcher;
         this.queueFactory = queueFactory;
-        log.info("DQ发送消息模板初始化完毕.分发策略为:{}", dispatcher.getName());
+        log.info("PMQ-DQ发送消息模板初始化完毕.分发策略为:{}", dispatcher.getName());
     }
 
     /**

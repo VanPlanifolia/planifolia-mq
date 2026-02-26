@@ -40,10 +40,10 @@ public class CustomerRegister {
                     String topic = annotation.topic();
                     String customerKey = buildKey(queue, topic);
                     customerTopicInvokeMap.computeIfAbsent(customerKey, k -> new ArrayList<>()).add(new CustomerInvoke(customer, method));
-                    log.info("消费者:{},注册成功!", customerKey);
+                    log.info("PMQ-消费者:{},注册成功!", customerKey);
                 }
             }
-            log.info("所有消费者注册成功! \n目前注册表状态:");
+            log.info("PMQ-所有消费者注册成功! \n目前注册表状态:");
             customerTopicInvokeMap.forEach((k, v) -> log.info("Key {},消费者数量 {},", k, v.size()));
         });
 

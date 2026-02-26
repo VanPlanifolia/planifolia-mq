@@ -37,7 +37,7 @@ public class DefDelayQueueDispatcher implements DelayMessageDispatcher {
     public void dispatch(String queue, DelayMessage message) {
         List<CustomerInvoke> invokeList = customerRegister.getInvokes(queue, message.getTopic());
         if (invokeList.isEmpty()) {
-            log.info("消息customerKey:{},没有对应的处理器默认被丢弃!", customerRegister.buildKey(queue, message.getTopic()));
+            log.info("PMQ-消息customerKey:{},没有对应的处理器默认被丢弃!", customerRegister.buildKey(queue, message.getTopic()));
             return;
         }
         invokeList.forEach(invoker -> invoker.invoke(message));

@@ -2,7 +2,9 @@
 
 package van.planifolia.planifoliamq.core;
 
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import van.planifolia.planifoliamq.exception.QueueIsExistsException;
 import van.planifolia.planifoliamq.model.DelayMessage;
 
@@ -24,14 +26,29 @@ public class QueueFactory {
     /**
      * 被管理的所有的延迟队列Map
      */
-    private static final Map<String, DelayQueue<DelayTaskWrapper>> delayQueueMap = new ConcurrentHashMap<>();
+    private  final Map<String, DelayQueue<DelayTaskWrapper>> delayQueueMap = new ConcurrentHashMap<>();
 
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    @PreDestroy
+    public void destroy() {
+        threadPoolTaskExecutor.destroy();
+        log.info("PMQ-所有队列观察者已销毁!");
+    }
+    /**
+     * 构造方法初始化所有消费者的观察者
+     * @param customerRegister 消费者注册表
+     */
+    public QueueFactory(CustomerRegister customerRegister, ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+        this.threadPoolTaskExecutor = threadPoolTaskExecutor;
+        customerRegister.getAllQueueName().stream().map(this::createPollingTask).forEach(threadPoolTaskExecutor::submit);
+    }
     /**
      * 创建一个新队列
      *
      * @param name 队列名称
      */
-    public  void createQueue(String name) {
+    public void createQueue(String name) {
         if (delayQueueMap.get(name) != null) {
             throw new QueueIsExistsException("创建的队列已存在！");
         }
@@ -67,14 +84,14 @@ public class QueueFactory {
      */
     public Runnable createPollingTask(String queueName) {
         return () -> {
-            log.info("队列:{},消息观察者创建成功",queueName);
+            log.info("MPQ-队列:{},消息观察者创建成功",queueName);
             DelayQueue<DelayTaskWrapper> queue = getQueue(queueName);
             while (true) {
                 try {
                     DelayTaskWrapper task = queue.take();
                     task.execute(queueName);
                 } catch (InterruptedException ignored) {
-                    log.info("轮询拉取消息异常:{}", ignored.getMessage());
+                    log.error("PMQ-轮询拉取消息异常:{}", ignored.getMessage());
                 }
             }
         };

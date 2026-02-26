@@ -10,7 +10,7 @@
     </parent>
     <groupId>van.planiflia</groupId>
     <artifactId>planifolia-mq</artifactId>
-    <version>0.0.4-1</version>
+    <version>0.0.5-2</version>
     <name>planifolia-mq</name>
     <description>planifolia-mq</description>
     <url/>
